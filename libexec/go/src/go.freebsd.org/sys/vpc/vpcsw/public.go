@@ -127,3 +127,14 @@ func Open(cfg Config) (*VPCSW, error) {
 		id: cfg.ID,
 	}, nil
 }
+
+// PortAdd adds a new VPC Port to this VPC Switch.
+func (sw *VPCSW) PortAdd() error {
+	// TODO(seanc@): Test to see make sure the descriptor has the mutate bit set.
+
+	if err := vpc.Ctl(sw.h, vpc.Cmd(_PortAddCmd), nil, nil); err != nil {
+		return errors.Wrap(err, "unable to add a VPC Port to VPC Switch")
+	}
+
+	return nil
+}
