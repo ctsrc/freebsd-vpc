@@ -642,7 +642,8 @@ static __inline void mvec_sanity(const struct mbuf *m __unused) {}
 #define	EXT_JUMBO16	5	/* jumbo cluster 16184 bytes */
 #define	EXT_PACKET	6	/* mbuf+cluster from packet zone */
 #define	EXT_MBUF	7	/* external mbuf reference */
-#define	EXT_MVEC	8	/* pointer to mbuf vector */
+#define	EXT_MEXT	8	/* reserved value mbuf extensions from NFLX */
+#define	EXT_MVEC	9	/* pointer to mbuf vector */
 
 #define	EXT_VENDOR1	224	/* for vendor-internal use */
 #define	EXT_VENDOR2	225	/* for vendor-internal use */
