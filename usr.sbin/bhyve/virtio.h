@@ -328,7 +328,7 @@ struct virtio_softc {
 	pthread_mutex_t *vs_mtx;	/* POSIX mutex, if any */
 	struct pci_devinst *vs_pi;	/* PCI device instance */
 	uint32_t vs_negotiated_caps;	/* negotiated capabilities */
-	struct vqueue_info *vs_queues;	/* one per vc_nvq */
+	struct vqueue_info **vs_queues;	/* one per vc_nvq */
 	int	vs_curq;		/* current queue */
 	uint8_t	vs_status;		/* value from last status write */
 	uint8_t	vs_isr;			/* ISR flags, if not MSI-X */
@@ -472,7 +472,7 @@ vq_kick_disable(struct vqueue_info *vq)
 struct iovec;
 void	vi_softc_linkup(struct virtio_softc *vs, struct virtio_consts *vc,
 			void *dev_softc, struct pci_devinst *pi,
-			struct vqueue_info *queues);
+			struct vqueue_info *queues[]);
 int	vi_intr_init(struct virtio_softc *vs, int barnum, int use_msix);
 void	vi_reset_dev(struct virtio_softc *);
 void	vi_set_io_bar(struct virtio_softc *, int);

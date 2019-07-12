@@ -441,7 +441,7 @@ pci_vtnet_init(struct vmctx *ctx, struct pci_devinst *pi, char *opts)
 	/* Link is up if we managed to open backend device. */
 	sc->vsc_config.status = (opts == NULL || sc->vsc_be);
 	
-	vi_softc_linkup(&sc->vsc_vs, &sc->vsc_consts, sc, pi, sc->vsc_queues);
+	vi_softc_linkup(&sc->vsc_vs, &sc->vsc_consts, sc, pi, (struct vqueue_info **)sc->vsc_queues);
 	sc->vsc_vs.vs_mtx = &sc->vsc_mtx;
 
 	/* use BAR 1 to map MSI-X table and PBA, if we're using MSI-X */

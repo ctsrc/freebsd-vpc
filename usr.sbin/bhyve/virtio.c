@@ -63,7 +63,7 @@ __FBSDID("$FreeBSD$");
 void
 vi_softc_linkup(struct virtio_softc *vs, struct virtio_consts *vc,
 		void *dev_softc, struct pci_devinst *pi,
-		struct vqueue_info *queues)
+		struct vqueue_info *queues[])
 {
 	int i;
 
@@ -75,8 +75,8 @@ vi_softc_linkup(struct virtio_softc *vs, struct virtio_consts *vc,
 
 	vs->vs_queues = queues;
 	for (i = 0; i < vc->vc_nvq; i++) {
-		queues[i].vq_vs = vs;
-		queues[i].vq_num = i;
+		queues[i]->vq_vs = vs;
+		queues[i]->vq_num = i;
 	}
 }
 
@@ -99,7 +99,7 @@ vi_reset_dev(struct virtio_softc *vs)
 		assert(pthread_mutex_isowned_np(vs->vs_mtx));
 
 	nvq = vs->vs_vc->vc_nvq;
-	for (vq = vs->vs_queues, i = 0; i < nvq; vq++, i++) {
+	for (vq = vs->vs_queues[0], i = 0; i < nvq; vq++, i++) {
 		vq->vq_flags = 0;
 		vq->vq_last_avail = 0;
 		vq->vq_save_used = 0;
@@ -176,7 +176,7 @@ vi_vq_init(struct virtio_softc *vs, uint32_t pfn)
 	size_t size;
 	char *base;
 
-	vq = &vs->vs_queues[vs->vs_curq];
+	vq = vs->vs_queues[vs->vs_curq];
 	vq->vq_pfn = pfn;
 	phys = (uint64_t)pfn << VRING_PFN;
 	size = vring_size(vq->vq_qsize);
@@ -618,11 +618,11 @@ bad:
 		break;
 	case VTCFG_R_PFN:
 		if (vs->vs_curq < vc->vc_nvq)
-			value = vs->vs_queues[vs->vs_curq].vq_pfn;
+			value = vs->vs_queues[vs->vs_curq]->vq_pfn;
 		break;
 	case VTCFG_R_QNUM:
 		value = vs->vs_curq < vc->vc_nvq ?
-		    vs->vs_queues[vs->vs_curq].vq_qsize : 0;
+		    vs->vs_queues[vs->vs_curq]->vq_qsize : 0;
 		break;
 	case VTCFG_R_QSEL:
 		value = vs->vs_curq;
@@ -644,7 +644,7 @@ bad:
 		break;
 	case VTCFG_R_QVEC:
 		value = vs->vs_curq < vc->vc_nvq ?
-		    vs->vs_queues[vs->vs_curq].vq_msix_idx :
+		    vs->vs_queues[vs->vs_curq]->vq_msix_idx :
 		    VIRTIO_MSI_NO_VECTOR;
 		break;
 	}
@@ -759,7 +759,7 @@ bad:
 				name, (int)value);
 			goto done;
 		}
-		vq = &vs->vs_queues[value];
+		vq = vs->vs_queues[value];
 		if (vq->vq_notify)
 			(*vq->vq_notify)(DEV_SOFTC(vs), vq);
 		else if (vc->vc_qnotify)
@@ -780,7 +780,7 @@ bad:
 	case VTCFG_R_QVEC:
 		if (vs->vs_curq >= vc->vc_nvq)
 			goto bad_qindex;
-		vq = &vs->vs_queues[vs->vs_curq];
+		vq = vs->vs_queues[vs->vs_curq];
 		vq->vq_msix_idx = value;
 		break;
 	}

@@ -696,7 +696,7 @@ pci_vtscsi_init(struct vmctx *ctx, struct pci_devinst *pi, char *opts)
 		return (1);
 	}
 
-	vi_softc_linkup(&sc->vss_vs, &vtscsi_vi_consts, sc, pi, sc->vss_vq);
+	vi_softc_linkup(&sc->vss_vs, &vtscsi_vi_consts, sc, pi, (struct vqueue_info **)sc->vss_vq);
 	sc->vss_vs.vs_mtx = &sc->vss_mtx;
 
 	/* controlq */

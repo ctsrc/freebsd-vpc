@@ -626,7 +626,7 @@ pci_vtcon_init(struct vmctx *ctx, struct pci_devinst *pi, char *opts)
 	sc->vsc_config->cols = 80;
 	sc->vsc_config->rows = 25; 
 
-	vi_softc_linkup(&sc->vsc_vs, &vtcon_vi_consts, sc, pi, sc->vsc_queues);
+	vi_softc_linkup(&sc->vsc_vs, &vtcon_vi_consts, sc, pi, (struct vqueue_info **)sc->vsc_queues);
 	sc->vsc_vs.vs_mtx = &sc->vsc_mtx;
 
 	for (i = 0; i < VTCON_MAXQ; i++) {
